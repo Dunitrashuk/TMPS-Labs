@@ -20,12 +20,184 @@ Some examples of this kind of design patterns are:
 For this laboratory work I chose the domain area of vehicles. For this laboratory work I will use the Java Programming Language.
 
 So, lets say we are a business that produces different kind of vehicles for some clients. As for simplicity I will use only 3 types of vehicles: Cars, Motor-Bikes and Bicycles.
+So we will have 3 main classes representing each vehicle. Now let's see how we can diversify the creation of these vehicles using some CDP.
+### 1. Builder
+The Builder pattern allows us to write readable, understandable code to set up complex objects. Let's say we need to create a vehicle with some parameters. One way to do it is by making a constructor. But what if some fields are optional, then we need to make multiple constructors.
 
-So we will have 3 main classes representing each vehicle. Now let's see how we can diversify the creation of this vehicles using some CDP.
+Thus, there are two specific problems that we need to solve:
 
+* Too many constructor arguments.
+* Incorrect object state.
 
-### 1. Factory Method
-I will start with Factory Method.
+The builder will contain all the fields that exist on the Vehicle class itself. We will configure all the fields that we want on the builder, and then we'll use the builder to create vehicles.
+At the same time, we'll remove the public constructor from the Vehicle class and replace it with a private constructor so that vehicles can only be created via the builder.
+
+And we will put the Builder inside the Vehicle class:
+```java
+public class Vehicle {
+
+    private String type;
+    private int nrSeats;
+    private int nrWheels;
+    private String color;
+
+    Vehicle(VehicleBuilder builder) {
+        this.type = builder.type;
+        this.nrSeats = builder.nrSeats;
+        this.nrWheels = builder.nrWheels;
+        this.color = builder.color;
+    }
+
+    public static class VehicleBuilder {
+        private String type;
+        private int nrSeats;
+        private int nrWheels;
+        private String color;
+
+        public VehicleBuilder(String type, int nrSeats) {
+            this.type = type;
+            this.nrSeats = nrSeats;
+        }
+
+        public VehicleBuilder nrWheels(int nrWheels) {
+            this.nrWheels = nrWheels;
+            return this;
+        }
+
+        public VehicleBuilder color(String color) {
+            this.color = color;
+            return this;
+        }
+
+        public Vehicle build() {
+            Vehicle vehicle = new Vehicle(this);
+            vehicle.type = this.type;
+            vehicle.nrSeats = this.nrSeats;
+            vehicle.nrWheels = this.nrWheels;
+            vehicle.color = this.color;
+            return vehicle;
+        }
+    }
+    //getters
+    public String getType() {
+        return type;
+    }
+
+    public int getNrSeats() {
+        return nrSeats;
+    }
+
+    public int getNrWheels() {
+        return nrWheels;
+    }
+
+    public String getColor() {
+        return color;
+    }
+}
+```
+We will write some getters in order to verify the objects created in the main method:
+```java
+public class main {
+    public static void main(String[] args) {
+        Vehicle car = new Vehicle.VehicleBuilder("car", 5)
+            .nrWheels(4)
+            .color("red")
+            .build();
+
+        Vehicle bicycle = new Vehicle.VehicleBuilder("bicycle", 1)
+            .nrWheels(2)
+            .build();
+
+        System.out.println("Type: " + car.getType());
+        System.out.println("Seats: " + car.getNrSeats());
+        System.out.println("Wheels: " + car.getNrWheels());
+        System.out.println("Color: " + car.getColor());
+
+        System.out.println("\nType: " + bicycle.getType());
+        System.out.println("Seats: " + bicycle.getNrSeats());
+        System.out.println("Wheels: " + bicycle.getNrWheels());
+    }
+}
+```
+As we can see the objects we created via builder have the correct fields and are immutable. Also, we can pass fewer arguments (bicycle example). 
+```
+Type: car
+Seats: 5
+Wheels: 4
+Color: red
+
+Type: bicycle
+Seats: 1
+Wheels: 2
+```
+### 2. Prototype
+Prototype patterns are required, when object creation is time-consuming, and costly operation, so we create objects with the existing object itself. One of the best available ways to create an object from existing objects is the clone() method.
+To demonstrate the Prototype Pattern I will use only the generic interface Vehicle and the subclass Car.
+
+Here we create the interface Vehicle which extends Cloneable, this way we are able to copy instances of this class.
+```java
+public interface Vehicle extends Cloneable {
+
+    public void getType();
+    public Vehicle makeCopy();
+}
+```
+Next we create the Car class which inherits from Vehicle, and write the body of the **makeCopy()** function:
+```java
+public class Car implements Vehicle {
+
+    public Vehicle makeCopy() {
+        Car carObj = null;
+
+        try {
+            carObj = (Car) super.clone();
+        }
+
+        catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return carObj;
+    }
+
+    @Override
+    public void getType() {
+        System.out.println("Car");
+    }
+}
+```
+
+Next we create the PrototypeFactory class with a getClone function which will return a Vehicle object calling its makeCopy() function.
+```java
+public class PrototypeFactory {
+    public Vehicle getClone(Vehicle vehicle) {
+        return vehicle.makeCopy();
+    }
+}
+```
+
+In order to test the functionality we created an instance of Car and then used the PrototypeFactory and getClone function to create a copy of the car object.
+Here is the main program:
+```java
+public class main {
+    public static void main(String[] args) {
+        PrototypeFactory vehicleMaker = new PrototypeFactory();
+
+        Car car = new Car();
+        Car clonedCar = (Car) vehicleMaker.getClone(car);
+
+        System.out.println("car hashcode: " + car.hashCode());
+        System.out.println("cloned car hashcode: " + clonedCar.hashCode());
+    }
+}
+```
+The output is:
+```
+car hashcode: 250421012
+cloned car hashcode: 2093631819
+```
+As we can see the two objects created have different hash-codes.
+### 3. Factory Method
 
 Firstly first we need to create our main vehicle classes which are Car, Motor-Bike, and Bicycle.
 Because all this classes are from a similar domain we can wrap them into a more generic class named "Vehicle" and inherit from it.
@@ -106,7 +278,7 @@ Car
 MotorBike
 Bicycle
 ```
-### 2. Abstract Factory
+### 4. Abstract Factory
 
 The Abstract Factory design pattern builds upon the Factory Pattern and acts as the highest factory in the hierarchy. It represents the practice of creating a factory of factories.
 
@@ -246,3 +418,4 @@ Bicycle
 Bicycle-Clothes
 ```
 ## Conclusion
+In this laboratory work I implemented some Creational Design Patterns around a domain I chose. I implemented the Builder, Prototype, Factory and Abstract Factory Patterns. Design patterns can speed up the development process by providing tested, proven development paradigms. Effective software design requires considering issues that may not become visible until later in the implementation. Reusing design patterns helps to prevent subtle issues that can cause major problems and improves code readability for coders and architects familiar with the patterns.
