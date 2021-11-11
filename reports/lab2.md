@@ -84,7 +84,6 @@ public abstract class VehicleDecorator implements IVehicle {
 ```
 After that I created a decorator class ```PersonalisedInterior```. This class allows me to add a personalised interior to the car or bike the user wants to buy for some additional money.
 
-public class PersonalisedInterior extends VehicleDecorator{
 ```java
 public class PersonalisedInterior extends VehicleDecorator{
 
