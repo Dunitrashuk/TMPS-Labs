@@ -332,7 +332,7 @@ What you would like to buy?
 -Bikes 
 -Clothing Sets 
 If you want to exit type exit 
-cars
+bikes
 Do you want Personalised Interior for an extra of 5000$ ? y/n
 n
 

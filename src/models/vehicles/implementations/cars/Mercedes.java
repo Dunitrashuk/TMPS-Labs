@@ -5,8 +5,11 @@ import models.vehicles.abstractions.IVehicle;
 public class Mercedes implements IVehicle {
     private String model;
     private int year;
-    private double price;
+    private static double price;
 
+    public static double givePrice() {
+        return price;
+    }
     @Override
     public void setModel(String model) {
         this.model = model;

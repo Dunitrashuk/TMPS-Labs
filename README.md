@@ -2,10 +2,10 @@
 
 * [Creational](./reports/lab1.md)
 * [Structural](./reports/lab2.md)
-* Behavioral
+* [Behavioral](./reports/lab3.md)
 
 ## *Author: Mamaliga Dumitras*
 
+-------------------------------------
 
-
-To find reports from laboratory works access the reports folder or click on the links above (right now only Creational and Structural available).
+To find reports from laboratory works access the reports folder or click on the links above (right now all reports are available).
